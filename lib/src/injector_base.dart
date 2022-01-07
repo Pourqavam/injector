@@ -167,5 +167,5 @@ class Injector {
   }
 
   String _getIdentity<T>(String dependencyName) =>
-      "$dependencyName${T.hashCode.toString()}";
+      "$dependencyName${T.toString()}";
 }
