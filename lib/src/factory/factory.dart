@@ -1,31 +1,29 @@
-/// Gets registered at the injector an then gets called by the injector to
+/// Gets registered at the injector and then gets called by the injector to
 /// instantiate the dependency and all of its dependencies.
 ///
-/// Use the inner [injector] to get the dependencies that are required to
-/// instantiate the new dependency.
 ///
 /// Example:
 /// ```dart
-/// var myInjector = Injector();
+/// final myInjector = Injector();
 ///
-/// myInjector.registerDependency<Car>((Injector innerInjector) {
-///     var engine = innerInjector.getDependency<Engine>();
+/// myInjector.registerDependency<Car>(() {
+///     var engine = myInjector.getDependency<Engine>();
 ///     return CarImpl(engine: engine);
 /// });
 /// ```
-typedef Builder<T> = T Function();
+typedef DependencyBuilder<T> = T Function();
 
 abstract class Factory<T> {
-  final Builder<T> builder;
+  final DependencyBuilder<T> builder;
 
   Factory(this.builder);
 
   T get instance;
 
-  static Factory<T> provider<T>(Builder<T> builder) =>
+  static Factory<T> provider<T>(DependencyBuilder<T> builder) =>
       _ProviderFactory(builder);
 
-  static Factory<T> singleton<T>(Builder<T> builder) =>
+  static Factory<T> singleton<T>(DependencyBuilder<T> builder) =>
       _SingletonFactory(builder);
 }
 
@@ -33,7 +31,7 @@ abstract class Factory<T> {
 /// always returns a new instance built by the [builder].
 class _ProviderFactory<T> implements Factory<T> {
   @override
-  Builder<T> builder;
+  DependencyBuilder<T> builder;
 
   _ProviderFactory(this.builder);
 
@@ -45,7 +43,7 @@ class _ProviderFactory<T> implements Factory<T> {
 /// returns the same instance when accessing [instance].
 class _SingletonFactory<T> implements Factory<T> {
   @override
-  Builder<T> builder;
+  DependencyBuilder<T> builder;
 
   T? _value;
 
